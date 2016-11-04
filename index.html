@@ -25,8 +25,10 @@
         <h1>Bootstrap starter template</h1>
         <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
         <div class = "col-xs-12">
+          <div id = "quote-content"></div>
+          <div id = "quote-title"></div>
           <button id = "get-another-quote-button" class = "btn btn-primary">
-            Get Message
+            Get Random Quote
           </button>
         </div>
       </div>
@@ -42,8 +44,10 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script>
-    $.getJSON("https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&_jsonp=mycallback", function(a) {
-      $("body").append(a[0].content + "<p>— " + a[0].title + "</p>")
+    $.getJSON("https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&callback=", function(a) {
+      $("#quote-title").text("— " + a[0].title);
+      $("#quote-content").html(a[0].content);
+
     });
     $('#get-another-quote-button').on('click', function(e) {
         e.preventDefault();
@@ -51,7 +55,8 @@
           url: '/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
           success: function(data) {
             var post = data.shift(); // The data is an array of posts. Grab the first one.
-            $('#quote-title').text(post.title);
+            console.log(post);
+            $('#quote-title').text("— " + post.title);
             $('#quote-content').html(post.content);
 
             // If the Source is available, use it. Otherwise hide it.
