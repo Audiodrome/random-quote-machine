@@ -7,15 +7,11 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../../favicon.ico">
 
     <title>Starter Template for Bootstrap</title>
 
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Latest compiled and minified JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
     <!-- Custom styles for this template -->
     <link href="css/rqm.css" rel="stylesheet">
@@ -28,8 +24,13 @@
       <div class="starter-template">
         <h1>Bootstrap starter template</h1>
         <p class="lead">Use this document as a way to quickly start any new project.<br> All you get is this text and a mostly barebones HTML document.</p>
+        <div class = "col-xs-12">
+          <button id = "get-another-quote-button" class = "btn btn-primary">
+            Get Message
+          </button>
+        </div>
       </div>
-      
+
     </div><!-- /.container -->
 
 
@@ -37,11 +38,33 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script>
-    $.getJSON("http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&callback=", function(a) {
+    $.getJSON("http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&_jsonp=mycallback", function(a) {
       $("body").append(a[0].content + "<p>— " + a[0].title + "</p>")
     });
+    $('#get-another-quote-button').on('click', function(e) {
+        e.preventDefault();
+        $.ajax( {
+          url: '/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
+          success: function(data) {
+            var post = data.shift(); // The data is an array of posts. Grab the first one.
+            $('#quote-title').text(post.title);
+            $('#quote-content').html(post.content);
+
+            // If the Source is available, use it. Otherwise hide it.
+            if (typeof post.custom_meta !== 'undefined' && typeof post.custom_meta.Source !== 'undefined') {
+              $('#quote-source').html('Source:' + post.custom_meta.Source);
+            } else {
+              $('#quote-source').text('');
+            }
+          },
+          cache: false
+        });
+      });
+
     </script>
   </body>
 </html>
