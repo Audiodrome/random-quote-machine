@@ -22,9 +22,8 @@
       <div class="block-quote">
           <div id = "quote-content" class="robo-thin site__title"></div>
           <div id = "quote-title" class="robo-thin site__title"></div>
-          <button id = "get-another-quote-button" class = "butt">
-            Get Random Quote
-          </button>
+          <button class="butt" id="tweet-quote" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></button>
+          <button id = "random-quote" class = "butt">Get Random Quote</button>
       </div>
 
     </div><!-- /.container -->
@@ -38,23 +37,39 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery.min.js"><\/script>')</script>
     <script>
-    $.getJSON("https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1&callback=", function(a) {
-      $("#quote-title").text("— " + a[0].title);
-      $("#quote-content").html(a[0].content);
-    });
-    $('#get-another-quote-button').on('click', function(e) {
-        e.preventDefault();
+
+    function GetRandomQuote() {
         $.ajax( {
           url: 'https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
           success: function(data) {
             var post = data.shift(); // The data is an array of posts. Grab the first one.
-            console.log(post);
-            $('#quote-title').text("— " + post.title);
-            $('#quote-content').html(post.content);
+            title = post.title,
+            content = post.content.substring(3, post.content.length - 6);
+            $('#quote-title').text("— " + title);
+            $('#quote-content').html(content);
           },
           cache: false
         });
+    }
+
+    function encodeRFC5987ValueChars (str) {
+        return encodeURIComponent(str).
+            // Note that although RFC3986 reserves "!", RFC5987 does not,
+            // so we do not need to escape it
+            replace(/['()]/g, escape). // i.e., %27 %28 %29
+            replace(/\*/g, '%2A').
+                // The following are not required for percent-encoding per RFC5987,
+                // so we can allow for a little better readability over the wire: |`^
+                replace(/%(?:7C|60|5E)/g, unescape);
+    }
+
+    $(document).ready(function() {
+      GetRandomQuote();
+      $('#random-quote').on('click', GetRandomQuote);
+      $('#tweet-quote').on('click', function() {
+        window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('"' + content + '" –' + title));
       });
+    });
 
     </script>
   </body>
