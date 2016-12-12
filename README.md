@@ -1,2 +1,3 @@
-# random-quote-machine
-#### demo https://audiodrome.github.io/random-quote-machine/
+random-quote-machine
+====================
+demo https://audiodrome.github.io/random-quote-machine/
